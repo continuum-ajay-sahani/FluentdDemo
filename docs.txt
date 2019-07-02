@@ -5,3 +5,71 @@ docker build -t hostnmane/docker-thirdparty-local/fluentd:1.4.2 .
 docker login
 
 docker push hostname/docker-thirdparty-local/fluentd:1.4.2
+
+
+------------------------------fluent.conf----------------------------------------------
+<source>
+  @type forward
+  port 24224
+  bind 0.0.0.0
+</source>
+
+<filter **>
+  @type concat
+  key log
+  multiline_start_regexp /^[0-9]{4}/[0-9]{2}/[0-9]{2}/
+  flush_interval 5
+  timeout_label @NORMAL
+</filter>
+
+<match **>
+  @type relabel
+  @label @NORMAL
+</match>
+
+<label @NORMAL>
+  <match **>
+    @type stdout
+  </match>
+</label>
+
+-----------------------------------Other Docs --------------------------------------
+
+ocker build -t ajaysahani/fluentd:1.4.2 .
+
+ajaysahani/fluentd:1.4.2
+
+
+docker run -d -p 24224:24224 -p 24224:24224/udp -v /log:/fluentd/log ajaysahani/fluentd:1.4.2
+
+
+docker run -ti\
+  -p 24224:24224 \
+  -v /home/youraj/demo/Graylog/conf/fluent.conf:/fluentd/etc/fluent.conf \
+  -v /home/youraj/demo/Graylog/log/:/fluentd/log \
+  ajaysahani/fluentd:1.4.2
+
+docker run -ti\
+  -p 24224:24224 \
+  -v /home/youraj/demo/Graylog/conf/fluent.conf:/fluentd/etc/fluent.conf \
+  ajaysahani/fluentd:1.4.2
+
+
+docker run --log-driver=fluentd --log-opt tag="docker.mine" ubuntu echo 'Start I am 
+message1
+message2'
+
+
+docker run --log-driver=fluentd --log-opt tag="docker.mine" ubuntu echo '2019/06/17 12:41:44,827 - Hello Fluentd!
+MSG1
+MSG2'
+
+docker run --log-driver=fluentd --log-opt tag="docker.mine" ubuntu echo '2019/06/17 12:41:44,827 - Hello Fluentd2!
+MSG3
+MSG4'
+
+docker run --log-driver=fluentd --log-opt tag="docker.mine" ubuntu echo '{"name":"ajay sahani"}'
+
+
+docker run --log-driver=fluentd --log-opt tag="docker.123456" ubuntu echo 'Hello Fluentd!'
+
