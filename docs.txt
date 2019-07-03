@@ -73,3 +73,13 @@ docker run --log-driver=fluentd --log-opt tag="docker.mine" ubuntu echo '{"name"
 
 docker run --log-driver=fluentd --log-opt tag="docker.123456" ubuntu echo 'Hello Fluentd!'
 
+
+---------------------------------Gray log in docker--------------------------------------------------------
+
+http://docs.graylog.org/en/3.0/pages/installation/docker.html#quick-start
+
+
+
+
+
+
