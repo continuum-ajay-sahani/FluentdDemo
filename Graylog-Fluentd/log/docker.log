@@ -1,0 +1,4 @@
+{ "host":"example.com", "log": "start" }
+{ "host":"example.com", "log": "msg1" }
+{ "host":"example.com", "log": "msg2" }
+{ "host":"example.com", "log": "start" }
