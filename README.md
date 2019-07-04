@@ -1,1 +1,1 @@
-# FluentdDemo
+# Fluentd-Graylog setup
