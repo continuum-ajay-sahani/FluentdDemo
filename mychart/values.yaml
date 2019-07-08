@@ -5,9 +5,41 @@
 replicaCount: 1
 
 image:
-  repository: nginx
-  tag: stable
+  repository: tooling.itsupport247.net/docker-thirdparty-local/fluentd
+  tag: "1.4.2"
   pullPolicy: IfNotPresent
+
+configMaps: 
+  fluent.conf: |
+    <match fluentd.**>
+      @type null
+    </match>
+    
+    <source>
+      @type forward
+      port 24224
+      bind 0.0.0.0
+    </source>
+
+    <filter **>
+      @type concat
+      key log
+      multiline_start_regexp /^[0-9]{4}/[0-9]{2}/[0-9]{2}/
+      flush_interval 5
+      timeout_label @NORMAL
+    </filter>
+
+    <match **>
+      @type relabel
+      @label @NORMAL
+    </match>
+
+    <label @NORMAL>
+      <match **>
+        @type stdout
+      </match>
+    </label>
+
 
 nameOverride: ""
 fullnameOverride: ""
