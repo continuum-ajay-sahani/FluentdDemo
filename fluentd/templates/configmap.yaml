@@ -12,5 +12,4 @@ data:
   {{ $key }}: |-
 {{ $value | indent 4 }}
 {{- end }}
-{{- if .Values.metrics.enabled }}
-{{- end }}
+
