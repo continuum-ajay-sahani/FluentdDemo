@@ -75,6 +75,10 @@ resources: {}
   #  cpu: 100m
   #  memory: 128Mi
 
+## Persist data to a persistent volume
+persistence:
+  enabled: false
+  
 nodeSelector: {}
 
 tolerations: []
