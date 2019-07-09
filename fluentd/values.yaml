@@ -8,6 +8,8 @@ image:
   repository: tooling.itsupport247.net/juno-docker-nonprod-virtual/fluentd
   tag: "1.4.2"
   pullPolicy: IfNotPresent
+  pullSecrets:
+  - docker-pull-secret
 
 configMaps: 
   fluent.conf: |
@@ -79,5 +81,4 @@ tolerations: []
 
 affinity: {}
 
-imagePullSecrets: docker-pull-secret
 

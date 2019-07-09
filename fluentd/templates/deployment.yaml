@@ -19,22 +19,42 @@ spec:
         app.kubernetes.io/name: {{ include "fluentd.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+{{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range $pullSecret := .Values.image.pullSecrets }}
+        - name: {{ $pullSecret }}
+      {{- end }}
+{{- end }}    
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: 80
+            - name: http-input
+              containerPort: 9880
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+              path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
+              port: 9880
+            initialDelaySeconds: 5
+            timeoutSeconds: 1  
+          volumeMounts:
+          - name: config-volume-{{ template "fluentd.fullname" . }}
+            mountPath: /etc/fluent/config.d
+          - name: buffer
+            mountPath: "/var/log/fluentd-buffers"
+        volumes:
+        - name: config-volume-{{ template "fluentd.fullname" . }}
+          configMap:
+            name: {{ template "fluentd.fullname" . }}
+        - name: buffer
+          {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ template "fluentd.fullname" . }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}      
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}
@@ -49,5 +69,4 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
-    imagePullSecrets:
-        - name: {{ .Values.imagePullSecrets}}
+    
