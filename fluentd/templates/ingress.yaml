@@ -1,38 +1,36 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "fluentd.fullname" . -}}
-{{- $ingressPath := .Values.ingress.path -}}
+{{- $serviceName := include "fluentd.fullname" . -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ template "fluentd.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "fluentd.name" . }}
-    helm.sh/chart: {{ include "fluentd.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- with .Values.ingress.annotations }}
+    app: {{ template "fluentd.name" . }}
+    chart: {{ template "fluentd.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- if .Values.ingress.labels }}
+{{ toYaml .Values.ingress.labels | indent 4 }}
+{{- end }}
+{{- if .Values.ingress.annotations }}
   annotations:
-{{ toYaml . | indent 4 }}
+{{ tpl ( toYaml .Values.ingress.annotations | indent 4 ) . }}
 {{- end }}
 spec:
-{{- if .Values.ingress.tls }}
-  tls:
-  {{- range .Values.ingress.tls }}
-    - hosts:
-      {{- range .hosts }}
-        - {{ . | quote }}
-      {{- end }}
-      secretName: {{ .secretName }}
-  {{- end }}
-{{- end }}
   rules:
-  {{- range .Values.ingress.hosts }}
-    - host: {{ . | quote }}
-      http:
+    {{- range $host := .Values.ingress.hosts }}
+    - http:
         paths:
-          - path: {{ $ingressPath }}
+          - path: {{ $host.path | default "/" }}
             backend:
-              serviceName: {{ $fullName }}
-              servicePort: http
-  {{- end }}
-{{- end }}
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $host.servicePort }}
+    {{- if (not (empty $host.name)) }}
+      host: {{ $host.name }}
+    {{- end -}}
+    {{- end -}}
+  {{- if .Values.ingress.tls }}
+  tls:
+{{ toYaml .Values.ingress.tls | indent 4 }}
+  {{- end -}}
+{{- end -}}
