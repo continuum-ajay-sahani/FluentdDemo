@@ -78,3 +78,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+imagePullSecrets: docker-pull-secret
+
