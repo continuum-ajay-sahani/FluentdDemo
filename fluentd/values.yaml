@@ -9,7 +9,7 @@ image:
     - docker-pull-secret
 
 output:
-  host: graylog-udp
+  host: graylog-udp.graylog.svc.cluster.local
   port: 12201
   scheme: udp
   sslVersion: TLSv1
