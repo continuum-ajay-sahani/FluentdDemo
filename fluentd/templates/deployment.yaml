@@ -38,6 +38,26 @@ spec:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+          - name: OUTPUT_HOST
+            value: {{ .Values.output.host | quote }}
+          - name: OUTPUT_PORT
+            value: {{ .Values.output.port | quote }}
+          - name: OUTPUT_SCHEME
+            value: {{ .Values.output.scheme | quote }}
+          - name: OUTPUT_SSL_VERSION
+            value: {{ .Values.output.sslVersion | quote }}
+          - name: OUTPUT_BUFFER_CHUNK_LIMIT
+            value: {{ .Values.output.buffer_chunk_limit | quote }}
+          - name: OUTPUT_BUFFER_QUEUE_LIMIT
+            value: {{ .Values.output.buffer_queue_limit | quote }}
+          {{- range $key, $value := .Values.env }}
+          - name: {{ $key | quote }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- if .Values.extraEnvVars }}
+{{ toYaml .Values.extraEnvVars | indent 10 }}
+          {{- end }}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
         ports:

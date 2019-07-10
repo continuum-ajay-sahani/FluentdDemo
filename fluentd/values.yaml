@@ -11,7 +11,7 @@ image:
 output:
   host: elasticsearch-client.default.svc.cluster.local
   port: 9200
-  scheme: http
+  scheme: udp
   sslVersion: TLSv1
   buffer_chunk_limit: 2M
   buffer_queue_limit: 8
@@ -78,9 +78,15 @@ configMaps:
     </match>
     
     <source>
-      @type forward
-      port 24224
-      bind 0.0.0.0
+      type tail
+      path /var/log/syslog,/var/log/messages
+      pos_file /var/log/fluentd-system-logs.log.pos
+      encoding UTF-8
+      time_format %b %d %H:%M:%S
+      tag system.*
+      format syslog
+      message_format auto
+      read_from_head true
     </source>
 
     <filter **>
@@ -98,7 +104,20 @@ configMaps:
 
     <label @NORMAL>
       <match **>
-        @type stdout
+        @type gelf
+        @id  out_graylog
+        log_level info
+        include_tag_key true
+        host "#{ENV['OUTPUT_HOST']}"
+        port "#{ENV['OUTPUT_PORT']}"
+        protocol "#{ENV['OUTPUT_SCHEME']}"
+        buffer_chunk_limit 4096K
+        buffer_queue_limit 512
+        flush_interval 5s
+        max_retry_wait 30
+        disable_retry_limit
+        tag   cke
+        num_threads 8
       </match>
     </label>
 
