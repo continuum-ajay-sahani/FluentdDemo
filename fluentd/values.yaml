@@ -78,7 +78,7 @@ configMaps:
     </match>
     
     <source>
-      type tail
+      @type tail
       path /var/log/syslog,/var/log/messages
       pos_file /var/log/fluentd-system-logs.log.pos
       encoding UTF-8
@@ -106,7 +106,7 @@ configMaps:
       <match **>
         @type gelf
         @id  out_graylog
-        log_level info
+        @log_level info
         include_tag_key true
         host "#{ENV['OUTPUT_HOST']}"
         port "#{ENV['OUTPUT_PORT']}"
