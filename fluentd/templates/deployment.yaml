@@ -77,6 +77,7 @@ spec:
         volumeMounts:
         - name: config-volume-{{ template "fluentd.fullname" . }}
           mountPath: /fluentd/etc/fluent.conf
+          subPath: fluent.conf
         - name: buffer
           mountPath: "/var/log/fluentd-buffers"
         - name: varlog
