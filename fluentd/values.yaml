@@ -116,7 +116,6 @@ configMaps:
         flush_interval 5s
         max_retry_wait 30
         disable_retry_limit
-        tag   cke
         num_threads 8
       </match>
     </label>
