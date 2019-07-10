@@ -9,8 +9,8 @@ image:
     - docker-pull-secret
 
 output:
-  host: elasticsearch-client.default.svc.cluster.local
-  port: 9200
+  host: graylog-udp
+  port: 12201
   scheme: udp
   sslVersion: TLSv1
   buffer_chunk_limit: 2M
