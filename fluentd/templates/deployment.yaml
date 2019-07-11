@@ -40,28 +40,44 @@ subjects:
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
-  name: fluentd
-  namespace: system
+  name: {{ template "fluentd.fullname" . }}
   labels:
-    k8s-app: fluentd-logging
-    version: v1
-    kubernetes.io/cluster-service: "true"
+    app: {{ template "fluentd.name" . }}
+    chart: {{ template "fluentd.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "fluentd.name" . }}
+      release: {{ .Release.Name }}
+  {{- if .Values.persistence.enabled }}
+  strategy:
+    type: Recreate
+  {{- end }}
   template:
     metadata:
       labels:
+        app: {{ template "fluentd.name" . }}
+        release: {{ .Release.Name }}
         k8s-app: fluentd-logging
         version: v1
         kubernetes.io/cluster-service: "true"
+      annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- if .Values.annotations }}
+        {{- toYaml .Values.annotations | nindent 8 }}
+        {{- end }}
     spec:
-      serviceAccount: fluentd
-      serviceAccountName: fluentd
-      {{- if .Values.image.pullSecrets }}
+      serviceAccount: {{ template "fluentd.name" . }}
+      serviceAccountName: {{ template "fluentd.name" . }}
+{{- if .Values.image.pullSecrets }}
       imagePullSecrets:
       {{- range $pullSecret := .Values.image.pullSecrets }}
         - name: {{ $pullSecret }}
       {{- end }}
-      {{- end }}
+{{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
