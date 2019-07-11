@@ -73,6 +73,10 @@ ingress:
 
 configMaps:
   fluent.conf: |
+    @include systemd.conf
+    @include prometheus.conf"
+    @include kubernetes.conf
+    @include conf.d/*.conf
     <match fluentd.**>
       @type null
     </match>
