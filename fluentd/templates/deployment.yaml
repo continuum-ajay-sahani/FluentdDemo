@@ -3,14 +3,14 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ template "fluentd.name" . }}
-  namespace: {{ template "fluentd.name" . }}
+  namespace: kube-system
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: {{ template "fluentd.name" . }}
-  namespace: {{ template "fluentd.name" . }}
+  namespace: kube-system
 rules:
 - apiGroups:
   - ""
@@ -33,7 +33,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ template "fluentd.name" . }}
-  namespace: {{ template "fluentd.name" . }}
+  namespace: kube-system
 
 ---
 
