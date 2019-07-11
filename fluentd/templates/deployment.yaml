@@ -45,10 +45,7 @@ metadata:
     app: {{ template "fluentd.name" . }}
     chart: {{ template "fluentd.chart" . }}
     release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    k8s-app: fluentd-logging
-    version: v1
-    kubernetes.io/cluster-service: "true"
+    heritage: {{ .Release.Service }}  
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -58,20 +55,23 @@ spec:
   {{- if .Values.persistence.enabled }}
   strategy:
     type: Recreate
-  {{- end }}
-  template:
-    metadata:
-      labels:
-        app: {{ template "fluentd.name" . }}
-        release: {{ .Release.Name }}
+  {{- end }}  
       annotations:
         checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         {{- if .Values.annotations }}
         {{- toYaml .Values.annotations | nindent 8 }}
         {{- end }}
+
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentd-logging
+        version: v1
+        kubernetes.io/cluster-service: "true"
     spec:
       serviceAccount: {{ template "fluentd.fullname" . }}
       serviceAccountName: {{ template "fluentd.fullname" . }}
+
 {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
       {{- range $pullSecret := .Values.image.pullSecrets }}
