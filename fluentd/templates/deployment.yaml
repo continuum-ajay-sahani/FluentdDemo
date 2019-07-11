@@ -155,7 +155,6 @@ spec:
       affinity:
 {{ toYaml . | indent 8 }}
     {{- end }}
-    {{- with .Values.tolerations }}
       tolerations:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
