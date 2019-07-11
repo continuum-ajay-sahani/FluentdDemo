@@ -3,14 +3,14 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: fluentd
-  namespace: fluentd
+  namespace: kube-system
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: fluentd
-  namespace: fluentd
+  namespace: kube-system
 rules:
 - apiGroups:
   - ""
@@ -34,7 +34,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: fluentd
-  namespace: fluentd
+  namespace: kube-system
 ---
 
 apiVersion: extensions/v1beta1
@@ -46,6 +46,9 @@ metadata:
     chart: {{ template "fluentd.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    k8s-app: fluentd-logging
+    version: v1
+    kubernetes.io/cluster-service: "true"
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -157,5 +160,5 @@ spec:
     {{- end }}
     {{- with .Values.tolerations }}
       tolerations:
-{{ toYaml . | indent 8 }}
-    {{- end }}
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
