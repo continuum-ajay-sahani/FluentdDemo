@@ -111,9 +111,9 @@ configMaps:
         @id  out_graylog
         @log_level info
         include_tag_key true
-        host "#{ENV['OUTPUT_HOST']}"
-        port "#{ENV['OUTPUT_PORT']}"
-        protocol "#{ENV['OUTPUT_SCHEME']}"
+        host "#{ENV['FLUENT_GRAYLOG_HOST']}"
+        port "#{ENV['FLUENT_GRAYLOG_PORT']}"
+        protocol "#{ENV['FLUENT_PROTOCOL']}"
         buffer_chunk_limit 4096K
         buffer_queue_limit 512
         flush_interval 5s
