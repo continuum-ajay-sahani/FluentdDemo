@@ -363,7 +363,7 @@ configMaps:
       @id filter_kube_metadata
     </filter>  
 
-resources: {}
+resources:
   limits:
     memory: 600Mi
   requests:
