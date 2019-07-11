@@ -34,7 +34,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ template "fluentd.name" . }}
-  namespace: system
+  namespace: logs
 ---
 
 apiVersion: extensions/v1beta1
