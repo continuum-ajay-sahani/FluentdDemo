@@ -73,9 +73,6 @@ ingress:
 
 configMaps:
   fluent.conf: |
-  
-    @include systemd.conf
-    @include kubernetes.conf
 
     <match fluentd.**>
       @type null
