@@ -3,18 +3,19 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ template "fluentd.name" . }}
-  namespace: kube-system
+  namespace: {{ template "fluentd.name" . }}
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: {{ template "fluentd.name" . }}
-  namespace: kube-system
+  namespace: {{ template "fluentd.name" . }}
 rules:
 - apiGroups:
   - ""
   resources:
+  - namespaces
   - pods
   verbs:
   - get
@@ -33,7 +34,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ template "fluentd.name" . }}
-  namespace: kube-system
+  namespace: {{ template "fluentd.name" . }}
 
 ---
 
@@ -70,8 +71,8 @@ spec:
         {{- toYaml .Values.annotations | nindent 8 }}
         {{- end }}
     spec:
-      serviceAccount: fluentd
-      serviceAccountName: fluentd
+      serviceAccount: {{ template "fluentd.name" . }}
+      serviceAccountName: {{ template "fluentd.name" . }}
 {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
       {{- range $pullSecret := .Values.image.pullSecrets }}
