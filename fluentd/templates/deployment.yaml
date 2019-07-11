@@ -3,14 +3,14 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ template "fluentd.name" . }}
-  namespace: system
+  namespace: {{ template "fluentd.name" . }}
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: fluentd
-  namespace: system
+  name: {{ template "fluentd.name" . }}
+  namespace: {{ template "fluentd.name" . }}
 rules:
 - apiGroups:
   - ""
@@ -25,15 +25,15 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: fluentd
+  name: {{ template "fluentd.name" . }}
 roleRef:
   kind: ClusterRole
-  name: fluentd
+  name: {{ template "fluentd.name" . }}
   apiGroup: rbac.authorization.k8s.io
 subjects:
 - kind: ServiceAccount
-  name: fluentd
-  namespace: system
+  name: {{ template "fluentd.name" . }}
+  namespace: {{ template "fluentd.name" . }}
 
 ---
 
@@ -50,6 +50,8 @@ metadata:
     version: v1
     kubernetes.io/cluster-service: "true"
 spec:
+  serviceAccount: {{ template "fluentd.fullname" . }}
+  serviceAccountName: {{ template "fluentd.fullname" . }}
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
